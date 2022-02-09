@@ -5,7 +5,8 @@
 
 """
 ici est côté server. c'est programme permet de transfert des fichiers/dossiers
-dans localhost en TCP/IP
+dans
+localhost en TCP/IP
 avant d'éxecuter ce programme assurez-vous que vous êtes au même reseau avec le client autrement dit avec l'appareil -
 que vous voulez partager vos dossiers / fichiers.
 connectez-vous au même reseau puis executer ce fichier  server.py
@@ -20,6 +21,8 @@ import sys
 import random
 from tqdm import tqdm
 import time
+
+import password
 
 if sys.version_info[0] < 3:
     print("""
@@ -48,14 +51,15 @@ class FileTransfert:
     '''
     
     
-    def __init__(self, path):
+    def __init__(self, path='/'):
         self.host = socket.gethostbyname(socket.gethostname())
-        self.port = 9000
+        self.ports = [9000, 5520, 8888, 4512, 55512, 1992, 1993, 1999, 6655, 2031]
+        self.port = random.choice(self.ports)
         self.server_socket = self.host, self.port
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.conn.bind(self.server_socket)
         self.conn.listen(2)
-        self.path = r"C:\{}".format(path)
+        self.path = r"{}".format(path)
         self.filename = ""
         self.new_folder = ""
         print(f"\nsocket ouvert: {self.host}:{self.port}\nserver en ecoute...")
@@ -68,24 +72,9 @@ class FileTransfert:
             return listdir
             
             
-    def password(self, len_password):
-        # generateur du mdp prend 1 arg int et return la taille de l'arg, par alphanumerique + symbole
-        pwd = "" 
-        mot_cles = [
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-            '&', '%', '!', '?', ':', '*', '#'
-        ]
-        for i in range(len_password):
-            len_pwd5 = random.choice(mot_cles)
-            pwd += len_pwd5
-            
-        return pwd
-        
     def server_to_client(self):
         # blog 0
-        passw = self.password(8)
+        passw = password(8)
        
         # blog 1.
         # le socket et adresse du client est accept
@@ -93,7 +82,7 @@ class FileTransfert:
         # puis afficher le mdp pour donner au client pour pouvoir communique
         client_socket, client_addr = self.conn.accept()
         print(f"[+] {client_addr[0]}:{client_addr[1]} est connecté")
-        print(f"\n Mot de passe du serveur est : ", passw)
+        print(f"\n Mot de passe du serveur est : {passw}")
         
         #blog 2.
         # recevoir le mdp du client et compare au mdp du blog 1.
@@ -239,15 +228,19 @@ class FileTransfert:
             print(' mot de passe incorrect')
             
             
-def choise_path(path):
-    if os.path.exists(f"c:/{path}"):
-        print(f"\nLe repertoire C:/{path} sera partagé ainsi que les fichiers et les dossiers qui contient")
-        obj = FileTransfert(path)
-        obj.server_to_client()
-    else:
-        print(f"\n Le chemin spécifié n'existe pas C:\{path}")
-    
-print("\nTaper le nom d'un dossier dans la racine de votre disque C:/")  
-share_path = input("Quel dossier voulez-vous partager ? ")
+obj = FileTransfert()
+obj.server_to_client() 
 
-choise_path(share_path)
+          
+# def choise_path(path):
+#     if os.path.exists(f"/{path}"):
+#         print(f"\nLe repertoire C:/{path} sera partagé ainsi que les fichiers et les dossiers qui contient")
+#         obj = FileTransfert(path)
+#         obj.server_to_client()
+#     else:
+#         print(f"\n Le chemin spécifié n'existe pas C:\{path}")
+    
+# print("\nTaper le nom d'un dossier dans la racine de votre disque C:/")  
+# share_path = input("Quel dossier voulez-vous partager ? ")
+
+# choise_path(share_path)

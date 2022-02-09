@@ -14,7 +14,7 @@ def get_path():
         #recuperer le nom du dossier et ajouter dans la liste du dossiers
         pth = input("\n-> Dossier $ ") 
         
-        #pth est dans la liste je sors dans la boucle
+        #si pth est dans la liste je sors dans la boucle
         if pth in ["quit", "exit", "ok", '0']:
             print("\tBye !")
             break
